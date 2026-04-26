@@ -1,0 +1,30 @@
+{
+  "name": "EPEP — Election Process Education Platform",
+  "short_name": "EPEP",
+  "description": "India's most comprehensive election education platform. Understand how democracy works — maps, EVM simulator, AI assistant, quizzes, and real election data.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2D5A3D",
+  "background_color": "#F8F7F4",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["education", "government", "news"],
+  "icons": [
+    { "src": "/icons/icon-72x72.png",    "sizes": "72x72",    "type": "image/png" },
+    { "src": "/icons/icon-96x96.png",    "sizes": "96x96",    "type": "image/png" },
+    { "src": "/icons/icon-128x128.png",  "sizes": "128x128",  "type": "image/png" },
+    { "src": "/icons/icon-144x144.png",  "sizes": "144x144",  "type": "image/png" },
+    { "src": "/icons/icon-152x152.png",  "sizes": "152x152",  "type": "image/png" },
+    { "src": "/icons/icon-192x192.png",  "sizes": "192x192",  "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-384x384.png",  "sizes": "384x384",  "type": "image/png" },
+    { "src": "/icons/icon-512x512.png",  "sizes": "512x512",  "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512x512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Election Quiz", "short_name": "Quiz", "url": "/quiz", "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }] },
+    { "name": "Election Map", "short_name": "Map", "url": "/map", "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }] },
+    { "name": "EVM Simulator", "short_name": "EVM", "url": "/evm", "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }] }
+  ]
+}

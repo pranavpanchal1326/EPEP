@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env.local
+.git/
+.gitignore
+README.md
+*.log
+.DS_Store
+coverage/
+.nyc_output/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.eslintcache

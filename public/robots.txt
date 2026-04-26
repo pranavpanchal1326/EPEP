@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://epep.vercel.app/sitemap.xml
