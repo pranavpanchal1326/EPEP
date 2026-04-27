@@ -32,6 +32,19 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 500
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/__tests__/setup.js'],
+    include: ['src/__tests__/**/*.test.{js,jsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['src/**/*.{js,jsx}'],
+      exclude: ['src/__tests__/**', 'src/main.jsx', 'src/lib/firebase.js'],
+      thresholds: { lines: 60, functions: 60, branches: 50 },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

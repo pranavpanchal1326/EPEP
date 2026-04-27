@@ -7,11 +7,20 @@ import { useLocalScore } from '../../hooks/useLocalScore'
 import PersonalBest from './PersonalBest'
 import NumberReveal from '../shared/NumberReveal'
 import { FADE_IN_SCALE, BUTTON_PRESS } from '../../lib/motionVariants'
+import { trackEvent } from '../../lib/firebase'
 
 const ScoreScreen = ({ stats, questions, answers, mythBusterScore, onRestart }) => {
   const navigate = useNavigate(); const tryAgainRef = useRef(null);
   const { bestScore, sessionCount, isNewBest, isTied, saveScore, scoreDelta } = useLocalScore(stats, mythBusterScore);
-  useEffect(() => { saveScore(stats, mythBusterScore); }, []);
+  useEffect(() => {
+    saveScore(stats, mythBusterScore);
+    trackEvent('quiz_completed', {
+      score: stats.correct,
+      total: stats.total,
+      percentage: stats.percentage,
+      grade: stats.grade?.label,
+    });
+  }, []);
   useEffect(() => {
     if (stats.grade.label === "Election Expert") {
       const style = document.createElement('style'); style.id = 'confetti-style';

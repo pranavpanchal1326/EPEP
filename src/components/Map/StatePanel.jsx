@@ -7,6 +7,7 @@ import StatePanelWinners from './StatePanelWinners';
 import StatePanelCandidates from './StatePanelCandidates';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { STAGGER_CONTAINER, STAGGER_ITEM } from '../../lib/motionVariants';
+import PropTypes from 'prop-types';
 
 const StatePanel = ({ selectedState, isOpen, isLoading, onClose }) => {
   const isMobile = useMediaQuery('(max-width: 767px)');
@@ -77,4 +78,24 @@ const StatePanel = ({ selectedState, isOpen, isLoading, onClose }) => {
     </AnimatePresence>
   );
 };
+
+StatePanel.propTypes = {
+  selectedState: PropTypes.shape({
+    name: PropTypes.string,
+    stateCode: PropTypes.string,
+    phase: PropTypes.number,
+    totalSeats: PropTypes.number,
+    turnout2024: PropTypes.number,
+    registeredVoters: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    pollingStations: PropTypes.number,
+  }),
+  isOpen: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
+StatePanel.defaultProps = {
+  selectedState: null,
+};
+
 export default StatePanel;

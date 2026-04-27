@@ -5,6 +5,7 @@ import ELECTION_TIMELINE_DATA from '../../data/election-timeline.js';
 import ProcessStep from './ProcessStep';
 import { STAGGER_CONTAINER, STAGGER_ITEM, BUTTON_PRESS } from '../../lib/motionVariants';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { trackEvent } from '../../lib/firebase';
 
 const ICON_MAP = { Megaphone, FileText, Users, CheckSquare, Clipboard, Gavel, Map, Home };
 
@@ -21,6 +22,14 @@ const ElectionTimeline = () => {
     const currentData = ELECTION_TIMELINE_DATA[activeTab];
     if (currentData?.phases.length > 0) setOpenPhases({ [currentData.phases[0].phaseId]: true });
   }, [activeTab]);
+
+  const handleTogglePhase = (phaseId) => {
+    const isOpening = !openPhases[phaseId];
+    setOpenPhases((prev) => ({ ...prev, [phaseId]: !prev[phaseId] }));
+    if (isOpening) {
+      trackEvent('education_step_viewed', { step_id: phaseId, election_type: activeTab });
+    }
+  };
 
   const activeData = ELECTION_TIMELINE_DATA[activeTab];
 
@@ -52,7 +61,7 @@ const ElectionTimeline = () => {
               const isOpen = !!openPhases[phase.phaseId];
               return (
                 <motion.div key={phase.phaseId} variants={STAGGER_ITEM} className="relative">
-                  <button onClick={() => setOpenPhases(p => ({ ...p, [phase.phaseId]: !p[phase.phaseId] }))} className={"w-full text-left flex items-center justify-between p-5 md:p-6 rounded-2xl transition-all relative z-10 " + (isOpen ? 'bg-accent-light border border-accent/20 shadow-sm' : 'bg-surface border border-border-soft hover:border-accent shadow-card')}>
+                  <button onClick={() => handleTogglePhase(phase.phaseId)} className={"w-full text-left flex items-center justify-between p-5 md:p-6 rounded-2xl transition-all relative z-10 " + (isOpen ? 'bg-accent-light border border-accent/20 shadow-sm' : 'bg-surface border border-border-soft hover:border-accent shadow-card')}>
                     <div className="flex items-center gap-4 md:gap-6">
                       <div className={"w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-colors " + (isOpen ? 'bg-accent text-white' : 'bg-bg-base text-text-muted')}>{React.createElement(PhaseIcon, { size: isMobile ? 20 : 28 })}</div>
                       <div><span className="text-[10px] font-bold uppercase tracking-widest text-accent mb-0.5 block">Phase {pIdx + 1}</span><h3 className="font-display text-lg md:text-2xl font-bold">{phase.phaseTitle}</h3></div>

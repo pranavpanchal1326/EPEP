@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EVM_BUTTON_PRESS, STAGGER_CONTAINER, STAGGER_ITEM } from '../../lib/motionVariants';
+import PropTypes from 'prop-types';
 
 const CandidateRow = ({ serialNumber, name, party, partySymbol, partyColor, isNota, isActive, isSelected, isOtherSelected, onVote, isMobile }) => {
   const isDisabled = !isActive || isOtherSelected;
@@ -32,4 +33,29 @@ const BallotUnit = ({ candidates = [], phase, selectedCandidate, onVote, constit
     </div>
   );
 };
+
+BallotUnit.propTypes = {
+  candidates: PropTypes.arrayOf(
+    PropTypes.shape({
+      serialNumber: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      party: PropTypes.string.isRequired,
+      partySymbol: PropTypes.string,
+      partyColor: PropTypes.string,
+      isNota: PropTypes.bool,
+    })
+  ).isRequired,
+  phase: PropTypes.string.isRequired,
+  selectedCandidate: PropTypes.number,
+  onVote: PropTypes.func.isRequired,
+  constituencyName: PropTypes.string,
+  isLoading: PropTypes.bool.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+};
+
+BallotUnit.defaultProps = {
+  selectedCandidate: null,
+  constituencyName: '',
+};
+
 export default BallotUnit;

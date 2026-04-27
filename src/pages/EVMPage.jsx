@@ -31,7 +31,7 @@ const EVMPage = () => {
   return (
     <div className="min-h-screen bg-[#F8F7F4]">
       <EVMHeader />
-      <main>
+      <main id="main-content">
         <ErrorBoundary fallback={<EVMErrorFallback />}>
           <EVMSimulator />
         </ErrorBoundary>

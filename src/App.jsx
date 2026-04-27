@@ -12,6 +12,7 @@ import InstallBanner from './components/shared/InstallBanner'
 import PageLoader from './components/shared/PageLoader'
 import { MotionProvider } from './components/shared/LazyMotion'
 import { PAGE_VARIANTS } from './lib/motionVariants'
+import { trackEvent } from './lib/firebase'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const MapPage = lazy(() => import('./pages/MapPage'))
@@ -24,13 +25,20 @@ export default function App() {
   const location = useLocation()
   useEffect(() => { window.scrollTo(0, 0) }, [location])
 
+  useEffect(() => {
+    trackEvent('page_view', {
+      page_path: location.pathname,
+      page_title: document.title,
+    })
+  }, [location.pathname])
+
   return (
     <HelmetProvider>
       <MotionProvider>
         <div className="flex min-h-screen flex-col bg-[#F8F7F4] font-['DM_Sans'] text-[#1A1814]">
           <OfflineBanner />
           <Navbar />
-          <main id="main-content" className="flex-1 overflow-hidden">
+          <main className="flex-1 overflow-hidden">
             <ErrorBoundary>
               <AnimatePresence mode="wait">
                 <m.div key={location.pathname} variants={PAGE_VARIANTS} initial="initial" animate="animate" exit="exit" className="w-full">

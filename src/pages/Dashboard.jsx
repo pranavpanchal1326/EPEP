@@ -23,7 +23,7 @@ const Dashboard = () => {
   const { turnoutData, isLoadingTurnout, turnoutError, partyData, isLoadingParty, partyError, womenData, isLoadingWomen, womenError, summaryStats, isLoadingSummary } = useElectionData();
 
   return (
-    <div className="bg-bg-base min-h-screen">
+    <div id="main-content" className="bg-bg-base min-h-screen">
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-content mx-auto px-4 md:px-8 pt-10 pb-20">
         <header className="mb-10 text-center md:text-left">
            <div className="flex items-center justify-center md:justify-start gap-2 mb-3"><div className="w-2 h-2 rounded-full bg-accent" /><span className="text-[10px] font-bold uppercase tracking-widest text-accent">Data Intelligence</span></div>

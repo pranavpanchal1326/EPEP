@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { Vote, Map, BookOpen, BarChart2, Menu, X, HelpCircle } from 'lucide-react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { BUTTON_PRESS } from '../../lib/motionVariants';
+import SkipLink from './SkipLink';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,6 +37,7 @@ const Navbar = () => {
       style={{ height, background, backdropFilter: blur }}
       className="fixed top-0 left-0 right-0 z-[1000] border-b border-border-soft flex items-center px-4 md:px-8 safe-top"
     >
+      <SkipLink />
       <div className="max-w-content mx-auto w-full flex items-center justify-between">
         <NavLink to="/" className="flex items-center gap-2">
           <Vote size={isDesktop ? 28 : 24} className="text-accent" />

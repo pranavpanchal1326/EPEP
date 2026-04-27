@@ -4,6 +4,8 @@ import { useMotionConfig } from '../../hooks/useMotionConfig';
 import { Check, X, Zap } from 'lucide-react';
 import { STAGGER_CONTAINER, STAGGER_ITEM, BUTTON_PRESS } from '../../lib/motionVariants';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import PropTypes from 'prop-types';
+import { trackEvent } from '../../lib/firebase';
 
 const QuestionCard = ({ question, selectedAnswer, isRevealed, onSelect, onNext, isLast, timeLeft, isTimerActive }) => {
   const isMobile = useMediaQuery('(max-width: 639px)');
@@ -17,6 +19,14 @@ const QuestionCard = ({ question, selectedAnswer, isRevealed, onSelect, onNext, 
 
   const diffs = { easy: { color: '#2D5A3D', label: 'Easy' }, medium: { color: '#D4900A', label: 'Medium' }, hard: { color: '#C0392B', label: 'Hard' } };
   const diff = diffs[question.difficulty] || diffs.easy;
+
+  const handleSelectAnswer = (selectedIndex) => {
+    trackEvent('quiz_answer_submitted', {
+      question_index: question?.id ?? null,
+      is_correct: selectedIndex === question.correct,
+    });
+    onSelect(selectedIndex);
+  };
 
   if (isMobile) {
     return (
@@ -53,7 +63,7 @@ const QuestionCard = ({ question, selectedAnswer, isRevealed, onSelect, onNext, 
               const isCorrect = index === question.correct; const isSelected = index === selectedAnswer; const isWrong = isSelected && !isCorrect;
               return (
                 <motion.button
-                  key={index} variants={STAGGER_ITEM} onClick={() => onSelect(index)} disabled={isRevealed}
+                  key={index} variants={STAGGER_ITEM} onClick={() => handleSelectAnswer(index)} disabled={isRevealed}
                   animate={{ 
                     backgroundColor: isRevealed && isCorrect ? "#EBF2ED" : isRevealed && isWrong ? "#FDF2F2" : isSelected ? "#EBF2ED" : "#FFFFFF",
                     borderColor: isRevealed && isCorrect ? "#2D5A3D" : isRevealed && isWrong ? "#C0392B" : isSelected ? "#2D5A3D" : "#E8E4DC"
@@ -99,7 +109,7 @@ const QuestionCard = ({ question, selectedAnswer, isRevealed, onSelect, onNext, 
         <h2 className="font-body text-xl font-bold mb-6">{question.question}</h2>
         <div className="flex flex-col gap-3">
           {question.options.map((option, index) => (
-             <button key={index} onClick={() => onSelect(index)} disabled={isRevealed} className={"w-full p-5 rounded-xl border-2 text-left transition-all " + (selectedAnswer === index ? 'border-accent bg-accent-light' : 'border-border-soft')}>{option}</button>
+             <button key={index} onClick={() => handleSelectAnswer(index)} disabled={isRevealed} className={"w-full p-5 rounded-xl border-2 text-left transition-all " + (selectedAnswer === index ? 'border-accent bg-accent-light' : 'border-border-soft')}>{option}</button>
           ))}
         </div>
         {isRevealed && <div className="mt-8 pt-8 border-t border-border-soft"><p className="text-text-secondary">{question.explanation}</p><button onClick={onNext} className="mt-6 bg-accent text-white px-8 py-3 rounded-lg font-bold">{isLast ? 'See My Results' : 'Next Question'}</button></div>}
@@ -107,4 +117,29 @@ const QuestionCard = ({ question, selectedAnswer, isRevealed, onSelect, onNext, 
     </div>
   );
 };
+
+QuestionCard.propTypes = {
+  question: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    question: PropTypes.string.isRequired,
+    options: PropTypes.arrayOf(PropTypes.string).isRequired,
+    correct: PropTypes.number.isRequired,
+    explanation: PropTypes.string.isRequired,
+    difficulty: PropTypes.string,
+    isMythBuster: PropTypes.bool,
+  }).isRequired,
+  selectedAnswer: PropTypes.number,
+  isRevealed: PropTypes.bool.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired,
+  isLast: PropTypes.bool,
+  timeLeft: PropTypes.number.isRequired,
+  isTimerActive: PropTypes.bool.isRequired,
+};
+
+QuestionCard.defaultProps = {
+  selectedAnswer: null,
+  isLast: false,
+};
+
 export default QuestionCard;

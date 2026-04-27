@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search as SearchIcon, XCircle, ExternalLink, ChevronRight } from 'lucide-react';
 import ELECTION_QA from '../../data/election-qa.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { sanitiseQuery } from '../../lib/sanitise';
 
 const normalize = (str) => str ? str.toLowerCase().trim().replace(/[^a-z0-9\s]/g, '') : '';
 const tokenize = (str) => normalize(str).split(/\s+/).filter(Boolean);
@@ -80,7 +81,7 @@ const QASearch = ({ activeCategory, onCategorySelect }) => {
       <div className="relative mb-8">
         <SearchIcon size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
         <input
-          ref={inputRef} type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+          ref={inputRef} type="text" value={query} onChange={(e) => setQuery(sanitiseQuery(e.target.value, 200))}
           placeholder="Try 'NOTA', 'EVM', 'Registration'..."
           className="w-full h-14 pl-12 pr-12 bg-surface border border-border-soft rounded-2xl text-base focus:border-accent transition-all outline-none"
         />

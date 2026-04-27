@@ -6,6 +6,8 @@ import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
 import { SLIDE_UP_DRAWER, BUTTON_PRESS } from '../../lib/motionVariants';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { trackEvent } from '../../lib/firebase';
+import { sanitiseInput } from '../../lib/sanitise';
 
 const ChatDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +16,19 @@ const ChatDrawer = () => {
   const { messages, isLoading, sendMessage, clearChat } = useAIChat();
   const messagesEndRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 767px)');
+
+  const handleSendMessage = () => {
+    const safeMessage = sanitiseInput(inputValue, 500);
+    if (!safeMessage) return;
+
+    trackEvent('ai_chat_message_sent', {
+      length: safeMessage.length,
+      is_online: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    });
+
+    sendMessage(safeMessage);
+    setInputValue('');
+  };
 
   useEffect(() => {
     if (!window.visualViewport || !isMobile) return;
@@ -78,7 +93,7 @@ const ChatDrawer = () => {
                     rows="1"
                     style={{ fontSize: '16px' }}
                   />
-                  <button onClick={() => { if(inputValue.trim()) { sendMessage(inputValue); setInputValue(''); } }} className="bg-accent text-white p-4 rounded-2xl shadow-lg active:scale-95 transition-all"><Send size={20} /></button>
+                  <button onClick={handleSendMessage} className="bg-accent text-white p-4 rounded-2xl shadow-lg active:scale-95 transition-all"><Send size={20} /></button>
                 </div>
               </footer>
             </motion.div>

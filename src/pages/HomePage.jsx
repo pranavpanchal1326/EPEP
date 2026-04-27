@@ -11,7 +11,7 @@ const HomePage = () => {
   useSEO({ title: 'EPEP — India Election Process Education Platform', description: 'Understand India\'s election process with interactive maps, EVM simulator, and real data.' });
   const { disableTranslation } = useMotionConfig();
   return (
-    <main className="w-full">
+    <main id="main-content" className="w-full">
       <section className="relative min-height: 100dvh flex items-center justify-center overflow-hidden bg-bg-base px-6 py-20">
         <div className="absolute inset-0 z-0 opacity-10 md:opacity-20 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[60%] md:w-[40%] h-[40%] rounded-full bg-accent blur-[80px] md:blur-[120px]" />

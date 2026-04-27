@@ -6,6 +6,7 @@ import { QUIZ_CATEGORIES } from '../../data/quiz-questions';
 import QuestionCard from './QuestionCard';
 import ScoreScreen from './ScoreScreen';
 import ErrorBoundary from '../shared/ErrorBoundary';
+import { trackEvent } from '../../lib/firebase';
 
 const QuizErrorFallback = () => (
   <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-8 bg-[#F8F7F4]">
@@ -116,7 +117,10 @@ const QuizMode = () => {
       </div>
 
       <button
-        onClick={() => startQuiz()}
+        onClick={() => {
+          trackEvent('quiz_started', { total_questions: 20, timestamp: Date.now() });
+          startQuiz();
+        }}
         className="w-full md:w-[280px] bg-[#2D5A3D] text-white py-4 rounded-xl font-['DM_Sans'] font-semibold text-lg shadow-lg active:scale-[0.97] transition-all"
       >
         Start Quiz
@@ -169,7 +173,7 @@ const QuizMode = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] pt-20 pb-12 flex flex-col">
+    <div id="main-content" className="min-h-screen bg-[#F8F7F4] pt-20 pb-12 flex flex-col">
       <ErrorBoundary fallback={<QuizErrorFallback />}>
         {phase === 'idle' && renderIdle()}
         {phase === 'active' && renderActive()}

@@ -15,6 +15,7 @@ import { useEVMStateMachine } from '@/hooks/useEVMStateMachine';
 import { Info } from 'lucide-react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { STAGGER_CONTAINER, FADE_UP } from '../../lib/motionVariants';
+import { trackEvent } from '../../lib/firebase';
 
 const EVMSimulator = () => {
   const [constituency, setConstituency] = useState(DEFAULT_CONSTITUENCY);
@@ -39,6 +40,14 @@ const EVMSimulator = () => {
   const handleConstituencyChange = (id) => { setConstituency(id); resetMachine(); setShowVVPAT(false); loadCandidates(id); };
   const handleLearnMore = (id) => { setActiveLearnMoreId(id); setModalOpen(true); };
 
+  const handleCastVote = useCallback((candidateSerialNumber) => {
+    castVote(candidateSerialNumber);
+    trackEvent('evm_vote_cast', {
+      constituency: constituencyLabel || constituency,
+      flow_completed: true,
+    });
+  }, [castVote, constituencyLabel, constituency]);
+
   const stepInfo = EVM_PHASE_GUIDE[phase];
 
   return (
@@ -50,7 +59,7 @@ const EVMSimulator = () => {
       <motion.div variants={STAGGER_CONTAINER} initial="initial" animate="animate" className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8">
         <EVMShell
           votingStep={phase}
-          ballotUnitContent={<BallotUnit candidates={candidates} phase={phase} selectedCandidate={selectedCandidate} onVote={castVote} constituencyName={constituencyLabel} isLoading={isLoadingCandidates} isMobile={isMobile} />}
+          ballotUnitContent={<BallotUnit candidates={candidates} phase={phase} selectedCandidate={selectedCandidate} onVote={handleCastVote} constituencyName={constituencyLabel} isLoading={isLoadingCandidates} isMobile={isMobile} />}
           controlUnitContent={<ControlUnit phase={phase} selectedCandidate={selectedCandidate} candidates={candidates} onEnable={enableMachine} onViewResults={viewResults} onReset={resetMachine} onVVPATReady={() => { setShowVVPAT(true); setTimeout(() => setShowVVPAT(false), 7000); }} constituencyName={constituencyLabel} isMobile={isMobile} />}
           vvpatContent={<VVPATSlip show={showVVPAT} sessionId={sessionId} selectedCandidate={selectedCandidate} candidates={candidates} />}
         />

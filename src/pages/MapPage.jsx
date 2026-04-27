@@ -10,6 +10,7 @@ const MapPage = () => {
 
   return (
     <div
+      id="main-content"
       style={{
         display:   'flex',
         height:    'calc(100vh - 88px)',

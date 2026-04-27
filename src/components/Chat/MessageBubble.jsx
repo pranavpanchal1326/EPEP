@@ -1,4 +1,5 @@
 import React from 'react'; import { motion } from 'framer-motion'; import { User, Sparkles } from 'lucide-react';
+import PropTypes from 'prop-types';
 const MessageBubble = ({ message }) => {
   const isUser = message.role === 'user';
   return (
@@ -23,4 +24,16 @@ const MessageBubble = ({ message }) => {
     </motion.div>
   );
 };
+
+MessageBubble.propTypes = {
+  message: PropTypes.shape({
+    content: PropTypes.string.isRequired,
+    role: PropTypes.oneOf(['user', 'assistant']).isRequired,
+    timestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    source: PropTypes.string,
+    model: PropTypes.string,
+    isLoading: PropTypes.bool,
+  }).isRequired,
+};
+
 export default MessageBubble;

@@ -16,6 +16,7 @@ import ConstituencyPopup from './ConstituencyPopup'
 import PollingStationLayer from './PollingStationLayer'
 import { enrichStateData, enrichConstituencyData } from '@/services/mapDataService'
 import { PHASE_COLORS, STATIC_STATE_DATA } from '@/data/static-fallback'
+import { trackEvent } from '../../lib/firebase'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconUrl: markerIcon, iconRetinaUrl: markerIcon2x, shadowUrl: markerShadow })
@@ -66,6 +67,7 @@ const IndiaMap = () => {
       click: async (e) => {
         if (isConstituencyMode) return;
         const l = e.target;
+        trackEvent('map_state_clicked', { state_name: getStateName(feature) });
         if (selectedLayer.current && selectedLayer.current !== l) selectedLayer.current.setStyle(getStateStyle(selectedLayer.current.feature));
         l.setStyle({ fillOpacity: 0.35, weight: 2.5, color: '#1A4A2D' });
         selectedLayer.current = l;

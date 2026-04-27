@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PropTypes from 'prop-types';
 
 const VVPATSlip = ({ show, sessionId, selectedCandidate, candidates, voteTimestamp }) => {
   const votedCandidate = selectedCandidate === 999 
@@ -35,4 +36,28 @@ const VVPATSlip = ({ show, sessionId, selectedCandidate, candidates, voteTimesta
     </div>
   );
 };
+
+VVPATSlip.propTypes = {
+  show: PropTypes.bool.isRequired,
+  sessionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  selectedCandidate: PropTypes.number,
+  candidates: PropTypes.arrayOf(
+    PropTypes.shape({
+      serialNumber: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      party: PropTypes.string.isRequired,
+      partySymbol: PropTypes.string,
+      partyColor: PropTypes.string,
+    })
+  ),
+  voteTimestamp: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+
+VVPATSlip.defaultProps = {
+  sessionId: null,
+  selectedCandidate: null,
+  candidates: [],
+  voteTimestamp: null,
+};
+
 export default VVPATSlip;

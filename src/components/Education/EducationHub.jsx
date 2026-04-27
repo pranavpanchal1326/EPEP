@@ -35,7 +35,7 @@ const EducationHub = () => {
   };
 
   return (
-    <div className="bg-[var(--color-bg)] min-h-screen">
+    <div id="main-content" className="bg-[var(--color-bg)] min-h-screen">
       <section ref={heroRef} className="max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-20 pb-10 md:pb-16">
         <div className="max-w-3xl">
           <h1 className="font-['Playfair_Display'] text-[36px] md:text-[48px] font-bold text-[var(--color-text-primary)] leading-tight mb-6">Election Education Hub</h1>

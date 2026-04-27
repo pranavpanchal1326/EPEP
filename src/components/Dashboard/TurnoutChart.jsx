@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { TrendingUp, AlertCircle, Info } from 'lucide-react';
 import { FADE_UP } from '../../lib/motionVariants';
+import { useAppStore, selectors } from '../../store';
+import { trackEvent } from '../../lib/firebase';
 
 const DataSourceBadge = ({ source }) => {
   const colors = { live: 'bg-[#00C853] text-white', datagov: 'bg-[#2196F3] text-white', static: 'bg-[#6B6560] text-white' };
@@ -10,6 +12,21 @@ const DataSourceBadge = ({ source }) => {
 };
 
 const TurnoutChart = ({ data, isLoading, error, className = '', isMobile }) => {
+  const dashboardFilters = useAppStore(selectors.dashboardFilters);
+
+  const chartData = Array.isArray(data) ? data : data?.data || [];
+  const source = data?.source || 'static';
+
+  useEffect(() => {
+    const selectedYear = dashboardFilters?.yearRange?.[1];
+    if (!selectedYear) return;
+
+    trackEvent('dashboard_filter_applied', {
+      filter_type: 'year',
+      value: selectedYear,
+    });
+  }, [dashboardFilters?.yearRange?.[0], dashboardFilters?.yearRange?.[1]]);
+
   if (isLoading) {
     return <div className="h-[300px] w-full flex items-center justify-center text-text-muted">Loading chart data...</div>;
   }
@@ -17,9 +34,6 @@ const TurnoutChart = ({ data, isLoading, error, className = '', isMobile }) => {
   if (error || !data) {
     return <div className="h-[300px] w-full flex items-center justify-center text-error"><AlertCircle size={24} className="mr-2" /> Failed to load data</div>;
   }
-
-  const chartData = Array.isArray(data) ? data : data.data || [];
-  const source = data.source || 'static';
 
   return (
     <motion.section variants={FADE_UP} initial="initial" whileInView="whileInView" viewport={{ once: true }} className={"bg-white rounded-2xl border border-[#E8E4DC] p-6 shadow-sm " + className}>
