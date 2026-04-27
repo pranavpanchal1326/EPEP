@@ -37,10 +37,10 @@ def link_billing():
         return False
     
     print(f"\nLinking billing account: {billing_id}")
-    print("Project: epep-promptwars-2026\n")
+    print("Project: bnb-marathon-pranav\n")
     
     # Link billing
-    if not gcloud("billing", "projects", "link", "epep-promptwars-2026", 
+    if not gcloud("billing", "projects", "link", "bnb-marathon-pranav", 
                   "--billing-account", billing_id):
         print("\n✗ Failed to link billing account")
         print("\nTroubleshooting:")

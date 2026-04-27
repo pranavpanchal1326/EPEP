@@ -319,7 +319,7 @@ Local/Vercel deployment                Google Cloud Run deployment
 |----------------|---------------|----------|
 | **Google Antigravity** | Primary build and development platform | Entire project built inside Antigravity |
 | **Google Cloud Run** | Production deployment · live competition URL | `https://epep-1013785138678.asia-south1.run.app` |
-| **Google Artifact Registry** | Docker image storage for Cloud Run | `asia-south1-docker.pkg.dev/bnb-marathon-pranav` |
+| **Google Artifact Registry** | Docker image storage for Cloud Run | `asia-south1-docker.pkg.dev/bnb-marathon-pranav/epep-repo/epep` |
 | **Google Cloud Build** | CI/CD pipeline · auto-deploy on git push | `cloudbuild.yaml` |
 | **Google Gemma 3 27B** | Primary AI model for election assistant | `src/services/openrouter.js` — model 1 |
 | **Google Fonts** | Playfair Display · DM Sans · JetBrains Mono | `src/index.css` — self-hosted `@font-face` |
