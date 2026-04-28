@@ -29,16 +29,16 @@
   <img src="https://img.shields.io/badge/Vertical-Election_Education-2D5A3D?style=for-the-badge" alt="Vertical"/>
   <img src="https://img.shields.io/badge/Lighthouse-90%2B-F59E0B?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Lighthouse"/>
   <img src="https://img.shields.io/badge/PWA-Installable-5C2D91?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA"/>
-  <img src="https://img.shields.io/badge/Tests-80%2B_Passing-22C55E?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests Passing"/>
+  <img src="https://img.shields.io/badge/Tests-80%2B_Passing-22C55E?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests"/>
   <img src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge" alt="MIT License"/>
 </p>
 
 <p>
   <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
   <img src="https://img.shields.io/badge/Vite-5.3-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"/>
-  <img src="https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
   <img src="https://img.shields.io/badge/Gemini_AI-Direct_SDK-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI"/>
-  <img src="https://img.shields.io/badge/Firebase-Analytics-FF6F00?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase"/>
+  <img src="https://img.shields.io/badge/Firebase-Auth_%2B_Firestore_%2B_Analytics-FF6F00?style=for-the-badge&logo=firebase&logoColor=white" alt="Firebase"/>
+  <img src="https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
 </p>
 
 <br/>
@@ -62,7 +62,7 @@
 
 **[https://youtu.be/RKSnSyANSWU](https://youtu.be/RKSnSyANSWU)**
 
-> EVM Simulator · AI Election Assistant · Interactive India Map · Quiz Engine · Historical Dashboard
+> EVM Simulator · AI Election Assistant · Interactive India Map · Quiz + Leaderboard · Historical Dashboard
 
 </div>
 
@@ -128,6 +128,7 @@ Full Leaflet.js map with GeoJSON constituency boundaries sourced from Datameet I
 GeoJSON bundled locally       → no runtime file dependency
 3-layer fallback              → API → cache → minimal bundled JSON
 Service Worker pre-cache      → full offline map from first load
+Firebase Analytics            → map_state_clicked tracked per interaction
 ```
 
 </details>
@@ -149,6 +150,7 @@ Layer 5  →  Local Q&A Database         (150+ entries, always works)
 
 Every response cites ECI.gov.in, Constitution of India, or PIB.
 Refuses all political opinion questions. Never hallucinates.
+Every interaction logged to Firebase Firestore for topic analytics.
 
 </details>
 
@@ -172,6 +174,7 @@ Step 9  →  Mock result count displayed
 ```
 
 Every step cites the exact law that governs it.
+Vote cast event tracked via Firebase Analytics.
 
 </details>
 
@@ -194,19 +197,24 @@ Every step cites the exact law that governs it.
 | Electoral Bonds | 5+ | SC Ruling 2024 |
 | Reservation & Delimitation | 8+ | Constitution |
 
+Each step viewed tracked to Firebase Analytics.
+
 </details>
 
 <details>
-<summary><b>🧠 05 — Quiz & Gamification</b> &nbsp;·&nbsp; click to expand</summary>
+<summary><b>🧠 05 — Quiz & Gamification + Leaderboard</b> &nbsp;·&nbsp; click to expand</summary>
 
 <br/>
 
-80+ questions · 20 per session · Full-screen card UX · All facts verified against ECI
+80+ questions · 20 per session · Full-screen card UX · All facts ECI-verified
 
 - 30-second countdown timer (green → yellow → red)
 - Explanation after every answer — right or wrong
 - Grades: **Novice** / **Informed Citizen** / **Election Expert**
-- Score persisted in localStorage · Share via WhatsApp or Twitter
+- Score saved to **Firebase Firestore** leaderboard after every session
+- Optional **Google Sign-In** — adds your name to the leaderboard
+- Score also persisted in localStorage (works without auth)
+- Share via WhatsApp or Twitter
 
 ```
 "Minimum age to contest Lok Sabha?"  → 25 years       (Article 84b)
@@ -229,6 +237,7 @@ TCPD Lok Dhaba · Every Lok Sabha election · 1951 to 2024
 - Party seat count grouped bar chart
 - Women candidates vs. winners comparative bar
 - State-wise turnout heatmap
+- Filter interactions tracked via Firebase Analytics
 
 Full offline — 18-election static dataset bundled as fallback.
 
@@ -257,6 +266,11 @@ AI chat: 5 layers
   Layer 3  →  Llama 4 Maverick (OpenRouter)
   Layer 4  →  DeepSeek R2 (OpenRouter)
   Layer 5  →  Local Q&A JSON (offline, always works)
+
+Firebase: graceful degradation
+  Analytics  →  disabled silently if unconfigured
+  Firestore  →  falls back to localStorage
+  Auth       →  quiz works fully without sign-in
 ```
 
 ---
@@ -268,15 +282,40 @@ AI chat: 5 layers
 | **Google Antigravity** | Primary build platform | Entire project built inside Antigravity |
 | **Google Cloud Run** | Production deployment | `https://epep-frfy47jpra-el.a.run.app` |
 | **Google Artifact Registry** | Docker image storage | `asia-south1-docker.pkg.dev/epep-promptwars-2026` |
-| **Google Cloud Build** | CI/CD auto-deploy | `cloudbuild.yaml` |
-| **Google Gemini 1.5 Flash** | Primary AI model (Layer 1) | `src/services/gemini.js` |
-| **Google Gemma 3 27B** | AI fallback (Layer 2) | `src/services/openrouter.js` |
-| **Firebase Analytics** | User interaction tracking | `src/lib/firebase.js` — 10 tracked events |
+| **Google Cloud Build** | CI/CD auto-deploy on push | `cloudbuild.yaml` |
+| **Google Gemini 1.5 Flash** | Primary AI model — Layer 1 | `src/services/gemini.js` |
+| **Google Gemma 3 27B** | AI fallback — Layer 2 | `src/services/openrouter.js` |
+| **Firebase Analytics** | 10 tracked user events | `src/lib/firebase.js` → `trackEvent()` |
+| **Firebase Firestore** | Quiz leaderboard + AI interaction logs | `src/lib/firebase.js` → `saveQuizResult()` |
+| **Firebase Authentication** | Google Sign-In for leaderboard | `src/lib/firebase.js` → `signInWithGoogle()` |
 | **Google Fonts** | Playfair Display · DM Sans · JetBrains Mono | `src/index.css` — self-hosted `@font-face` |
 | **Chrome Lighthouse** | Performance audit target: 90+ | `vite.config.js` build config |
 | **Google PWA Standards** | Installable PWA · Manifest · Service Worker | `public/manifest.webmanifest` |
 
-**Gemini AI — direct SDK integration:**
+**Three Firebase services — all in one file:**
+
+```javascript
+// src/lib/firebase.js
+
+// ── Analytics ─────────────────────────────────────────────────
+trackEvent('quiz_completed',          { score, grade, percentage })
+trackEvent('evm_vote_cast',           { constituency })
+trackEvent('map_state_clicked',       { state_name })
+trackEvent('ai_response_received',    { model, layer })
+// + 6 more events across the app
+
+// ── Firestore ─────────────────────────────────────────────────
+await saveQuizResult({ score, percentage, grade, userId, displayName })
+await getLeaderboard(10)        // top 10 scores
+await saveAIInteraction({ query, aiLayer, model, isOnline })
+
+// ── Authentication ────────────────────────────────────────────
+const user = await signInWithGoogle()   // Google popup
+await signOutUser()
+const unsubscribe = onAuthChange(user => setCurrentUser(user))
+```
+
+**Gemini AI — direct Google SDK:**
 
 ```javascript
 // src/services/gemini.js
@@ -287,25 +326,56 @@ const model = genAI.getGenerativeModel({
   systemInstruction: EPEP_ELECTION_EXPERT_PROMPT,
   generationConfig: {
     maxOutputTokens: 300,
-    temperature:     0.2,   // factual accuracy priority
+    temperature:     0.2,   // factual accuracy over creativity
   },
 })
 ```
 
-**Firebase Analytics — 10 tracked events:**
+---
 
-```javascript
-// src/lib/firebase.js
-trackEvent('page_view',               { page_path, page_title })
-trackEvent('quiz_started',            { timestamp })
-trackEvent('quiz_answer_submitted',   { question_index, is_correct })
-trackEvent('quiz_completed',          { score, grade, percentage })
-trackEvent('evm_vote_cast',           { constituency, flow_completed })
-trackEvent('map_state_clicked',       { state_name })
-trackEvent('ai_chat_message_sent',    { length, is_online })
-trackEvent('ai_response_received',    { model, layer, source })
-trackEvent('education_step_viewed',   { step_id, election_type })
-trackEvent('dashboard_filter_applied',{ filter_type, value })
+## ⚙️ How The Solution Works
+
+```
+                ┌──────────────────────────────────────────────────┐
+                │                   USER BROWSER                   │
+                │            React 18 + Vite + Tailwind            │
+                └──────────────────────┬───────────────────────────┘
+                                       │
+                ┌──────────────────────▼───────────────────────────┐
+                │            GOOGLE CLOUD RUN (nginx)               │
+                │   epep-frfy47jpra-el.a.run.app · asia-south1     │
+                │   node:20 build → nginx:alpine · Port 8080       │
+                └──────────────────────┬───────────────────────────┘
+                                       │
+                ┌──────────────────────▼───────────────────────────┐
+                │              SERVICE WORKER (PWA)                 │
+                │  Cache-first assets · Network-first API data      │
+                └──────────┬────────────────────────┬──────────────┘
+                           │                        │
+          ┌────────────────▼──────────┐  ┌──────────▼──────────────┐
+          │   GOOGLE FIREBASE LAYER   │  │    DATA SERVICE LAYER    │
+          │  Analytics  (10 events)   │  │  tcpd.js → results      │
+          │  Firestore  (leaderboard) │  │  myneta.js → candidates │
+          │  Auth       (Google SSO)  │  │  Fallback: static JSON  │
+          └────────────────┬──────────┘  └──────────┬──────────────┘
+                           │                        │
+          ┌────────────────▼──────────┐             │
+          │   GOOGLE AI SERVICE LAYER │             │
+          │  L1: Gemini 1.5 Flash     │             │
+          │  L2: Gemma 3 27B          │             │
+          │  L3: Llama 4              │             │
+          │  L4: DeepSeek R2          │             │
+          │  L5: Local Q&A (offline)  │             │
+          └────────────────┬──────────┘             │
+                           │                        │
+                ┌──────────▼────────────────────────▼──────────────┐
+                │         ZUSTAND STORE + TanStack Query            │
+                └──────────────────────┬───────────────────────────┘
+                                       │
+                ┌──────────────────────▼───────────────────────────┐
+                │               REACT ROUTER v6                    │
+                │   /    /map    /evm    /learn    /quiz    /dash   │
+                └──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -316,34 +386,31 @@ trackEvent('dashboard_filter_applied',{ filter_type, value })
 
 ```bash
 npm run test          # run all tests
-npm run test:coverage # coverage report
-npm run test:watch    # watch mode
+npm run test:coverage # with coverage report
+npm run test:watch    # watch mode during development
 ```
 
-| Test File | What It Covers | Cases |
-|-----------|---------------|-------|
+| Test File | Coverage | Cases |
+|-----------|---------|-------|
 | `quiz.test.js` | Pool schema · fact accuracy · scoring · randomisation · localStorage | 30+ |
 | `electionQA.test.js` | Volume · schema · sources · categories · search core + edge | 20+ |
-| `fallback.test.js` | AI chain rotation · network failure · GeoJSON recovery · offline | 20+ |
+| `fallback.test.js` | AI chain rotation · network failure · offline recovery | 20+ |
 | `electoralConstants.test.js` | Constitutional facts · EVM flow · null guards · XSS sanitisation | 20+ |
 | `setup.js` | jsdom environment · browser API mocks | — |
 
-**Sample test — AI fallback integration flow:**
+**Integration flow test — AI fallback chain:**
 
 ```javascript
-it('falls through to Layer 3 when Layers 1 and 2 fail', async () => {
-  const callModel = vi.fn()
-    .mockRejectedValueOnce(new Error('Rate limited'))
-    .mockRejectedValueOnce(new Error('Timeout'))
-    .mockResolvedValueOnce('Answer from Layer 3')
-
-  let result = null
-  for (const model of AI_MODELS) {
-    try { result = await callModel(model); break }
-    catch { continue }
+it('calls local fallback when ALL 3 AI models fail', async () => {
+  const call  = vi.fn().mockRejectedValue(new Error('All down'))
+  const local = vi.fn().mockReturnValue('Local ECI answer')
+  let result  = null
+  for (const m of AI_MODELS) {
+    try { await call(m) } catch { continue }
   }
-  expect(result).toBe('Answer from Layer 3')
-  expect(callModel).toHaveBeenCalledTimes(3)
+  if (!result) result = local('election commission')
+  expect(local).toHaveBeenCalledOnce()
+  expect(result).toBe('Local ECI answer')
 })
 ```
 
@@ -352,14 +419,14 @@ it('falls through to Layer 3 when Layers 1 and 2 fail', async () => {
 ## 🔒 Security
 
 ```
-Input sanitisation   sanitiseInput() strips HTML tags, javascript: protocol,
-                     inline event handlers — applied on all user inputs
-                     sanitiseQuery() for search fields
-                     isValidAPIResponse() validates API shapes before use
+Input sanitisation   sanitiseInput() strips HTML, javascript: protocol,
+                     inline event handlers — applied to all user inputs
+                     sanitiseQuery() for search fields (200 char limit)
+                     isValidAPIResponse() validates API shapes
 
-API Key management   .env gitignored · never committed
-                     VITE_ vars client-side by design (demo build)
-                     Production: proxy AI calls through backend
+API Key management   .env gitignored · never committed to repo
+                     VITE_ vars client-side by design (competition demo)
+                     Production: proxy AI + Firebase calls through backend
 
 HTTP headers         X-Content-Type-Options: nosniff
                      X-Frame-Options: DENY
@@ -367,13 +434,17 @@ HTTP headers         X-Content-Type-Options: nosniff
                      Referrer-Policy: strict-origin-when-cross-origin
                      Cache-Control: immutable on all hashed assets
 
-AI guardrails        Strict system prompt — factual content only
-                     No political opinions · no hallucination
-                     Uncertain answers → "verify at eci.gov.in"
+Firebase Auth        Google OAuth only — no passwords stored
+                     Auth state via onAuthStateChanged subscription
+                     Sign-in is optional — nothing breaks without it
+
+AI guardrails        Gemini system prompt: factual election content only
+                     temperature: 0.2 — minimises hallucination
+                     safetySettings: BLOCK_MEDIUM_AND_ABOVE all categories
+                     No political opinions · uncertain → eci.gov.in
 
 Dependencies         npm audit: clean · no high/critical vulnerabilities
-
-HTTPS                Enforced by Cloud Run · all external URLs https://
+HTTPS                Cloud Run enforces · all external URLs https://
 ```
 
 ---
@@ -384,23 +455,25 @@ HTTPS                Enforced by Cloud Run · all external URLs https://
 Semantic HTML    <button> for actions · <a href> for navigation
                  No <div onClick> anywhere in the codebase
 
+Skip link        SkipLink component — first focusable element on every page
+                 Jumps to id="main-content" — WCAG 2.1 SC 2.4.1
+
 ARIA             aria-label on all icon-only buttons
                  aria-live="polite" on EVM step changes
-                 aria-expanded on accordions
+                 aria-expanded on accordions and hamburger menu
                  role="application" on India Map
-                 role="alert" on ErrorBoundary
+                 role="alert" + aria-atomic on ErrorBoundary
+                 role="region" + aria-label on Leaderboard
 
-Keyboard         Full tab navigation · SkipLink (skip to main content)
-                 Focus trap inside modals · custom focus ring
+Keyboard         Full tab navigation · focus trap in modals
+                 Custom focus ring: 2px solid #2D5A3D
 
 Contrast         Text Primary #1A1814 on #F8F7F4  →  19:1   AAA
                  Text Muted   #6B6560 on #F8F7F4  →  4.6:1  AA
                  White on Accent #2D5A3D           →  7.2:1  AAA
 
 Motion           useReducedMotion() on every animated component
-                 Spatial translations → 0 when OS reduce-motion on
-
-Font scaling     rem units throughout · Input font-size: 16px (no iOS zoom)
+Font scaling     rem units · input font-size: 16px (no iOS zoom)
 ```
 
 ---
@@ -412,7 +485,7 @@ Font scaling     rem units throughout · Input font-size: 16px (no iOS zoom)
 | First Contentful Paint | < 1.5s | Critical CSS inline · self-hosted fonts |
 | Time to Interactive | < 3.0s | All 6 routes lazy-loaded |
 | Lighthouse Performance | **90+** | Manual chunks · tree shaking |
-| Lighthouse Accessibility | **95+** | Semantic HTML · ARIA · contrast |
+| Lighthouse Accessibility | **95+** | Semantic HTML · ARIA · skip link |
 | Lighthouse Best Practices | **100** | No console errors · HTTPS |
 | Lighthouse SEO | **100** | Unique meta · OG tags · sitemap |
 | Initial bundle (gzipped) | < 300KB | Map + Charts lazy loaded |
@@ -431,23 +504,28 @@ cp .env.example .env
 npm install
 npm run dev
 # → http://localhost:5173
+# → All features work immediately — no key required
 ```
 
-**Optional — enable live AI and analytics (5 minutes total):**
+**Optional — unlock full Google Services (10 minutes):**
 
 ```bash
-# Google Gemini (free): aistudio.google.com/app/apikey
+# 1. Google Gemini (free): aistudio.google.com/app/apikey
 VITE_GEMINI_API_KEY=your_key
 
-# OpenRouter (free): openrouter.ai
+# 2. OpenRouter (free): openrouter.ai
 VITE_OPENROUTER_API_KEY=your_key
 
-# Firebase (free): console.firebase.google.com
+# 3. Firebase (free): console.firebase.google.com
+#    Create project → add web app → copy config
 VITE_FIREBASE_PROJECT_ID=epep-promptwars
-# ... (see .env.example for full list)
-```
+VITE_FIREBASE_API_KEY=...
+# (see .env.example for full list)
 
-Without any key — Map, EVM, Quiz, Education Hub, Dashboard, AI Chat (local fallback) all work fully.
+# Firebase Console setup:
+#   Authentication → Sign-in methods → Enable Google
+#   Firestore → Create database → Start in test mode
+```
 
 ---
 
@@ -456,16 +534,17 @@ Without any key — Map, EVM, Quiz, Education Hub, Dashboard, AI Chat (local fal
 ```bash
 # .env.example — rename to .env
 
-# Google Gemini AI — Layer 1 primary AI model
-# Free: aistudio.google.com/app/apikey
+# ── Google Gemini AI — Layer 1 primary AI ────────────────────
+# Free: aistudio.google.com/app/apikey · 15 req/min free tier
 VITE_GEMINI_API_KEY=your_gemini_key_here
 
-# OpenRouter — AI fallback chain (Layers 2-4)
+# ── OpenRouter — AI fallback chain Layers 2-4 ────────────────
 # Free: openrouter.ai
 VITE_OPENROUTER_API_KEY=your_openrouter_key_here
 
-# Firebase Analytics — Google Services integration
-# Free: console.firebase.google.com
+# ── Firebase — Analytics + Firestore + Auth ───────────────────
+# Free: console.firebase.google.com → New project → epep-promptwars
+# Enable: Analytics · Firestore · Authentication (Google provider)
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=epep-promptwars.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=epep-promptwars
@@ -474,8 +553,16 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 
-# WITHOUT ANY KEY:
-# ✅  Map · EVM · Quiz · Education · Dashboard · PWA · AI Chat (local)
+# ── Without any key, these work FULLY: ───────────────────────
+# ✅  Interactive India Map
+# ✅  EVM Simulator (complete 6-step flow)
+# ✅  Education Hub (150+ Q&As)
+# ✅  Quiz (scoring, grades, localStorage persistence)
+# ✅  Dashboard (1951-2024 data)
+# ✅  PWA + full offline mode
+# ✅  AI Chat (local Q&A fallback)
+# ✅  Leaderboard (anonymous, localStorage only)
+# ✅  Firebase (disabled gracefully, zero errors)
 ```
 
 ---
@@ -486,18 +573,23 @@ VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 # Build and test locally
 docker build -t epep .
 docker run -p 8080:8080 epep
+# → http://localhost:8080
 
 # Deploy to Google Cloud Run
 export PROJECT_ID=epep-promptwars-2026
 export REGION=asia-south1
 
-docker tag epep ${REGION}-docker.pkg.dev/${PROJECT_ID}/epep-repo/epep:latest
-docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/epep-repo/epep:latest
+docker tag epep \
+  ${REGION}-docker.pkg.dev/${PROJECT_ID}/epep-repo/epep:latest
+
+docker push \
+  ${REGION}-docker.pkg.dev/${PROJECT_ID}/epep-repo/epep:latest
 
 gcloud run deploy epep \
   --image=${REGION}-docker.pkg.dev/${PROJECT_ID}/epep-repo/epep:latest \
   --platform=managed --region=${REGION} \
-  --allow-unauthenticated --port=8080 --memory=256Mi
+  --allow-unauthenticated --port=8080 --memory=256Mi \
+  --min-instances=1
 
 # Live: https://epep-frfy47jpra-el.a.run.app
 ```
@@ -507,23 +599,24 @@ gcloud run deploy epep \
 ## 📦 Tech Stack
 
 ```
-FRONTEND                  MAPPING                   AI & GOOGLE
+FRONTEND                  MAPPING                   GOOGLE SERVICES
 ──────────────────────    ─────────────────────     ──────────────────────────
 React         18.3.0      Leaflet.js    1.9.4        Google Gemini 1.5 Flash
 Vite           5.3.0      React-Leaflet 4.2.1        Google Gemma 3 27B
 Tailwind CSS   3.4.0      markercluster 1.5.3        Firebase Analytics
-React Router   6.24.0     OpenStreetMap (tiles)      Google Cloud Run
-Zustand        4.5.0                                 Google Artifact Registry
-TanStack Query 5.50.0     DATA VIZ                  Google Cloud Build
-Framer Motion 11.3.0      ─────────────────────
-Axios          1.7.0      Recharts      2.12.0      TESTING
-                                                    ──────────────────────────
-UTILITIES                 BUILD                     Vitest
-──────────────────────    ─────────────────────     @testing-library/react
-Lucide React   0.400.0    Vite           5.3.0       jest-dom
-prop-types                sharp (icons)              jsdom
-react-helmet-async        svgo (SVG)                 @vitest/coverage-v8
-clsx · CVA                vite-plugin-pwa
+React Router   6.24.0     OpenStreetMap (tiles)      Firebase Firestore
+Zustand        4.5.0                                 Firebase Auth (Google)
+TanStack Query 5.50.0     DATA VIZ                  Google Cloud Run
+Framer Motion 11.3.0      ─────────────────────     Google Artifact Registry
+Axios          1.7.0      Recharts      2.12.0       Google Cloud Build
+
+TESTING                   BUILD                     CODE QUALITY
+──────────────────────    ─────────────────────     ──────────────────────────
+Vitest                    Vite           5.3.0       JSDoc — all services
+@testing-library/react    sharp (icons)              PropTypes — all components
+jest-dom                  svgo (SVG)                 constants.js
+jsdom                     vite-plugin-pwa            sanitise.js
+@vitest/coverage-v8       workbox-window             Consistent error patterns
 ```
 
 ---
@@ -537,47 +630,60 @@ epep/
 │   ├── india-constituencies.geojson
 │   ├── manifest.webmanifest
 │   ├── robots.txt + sitemap.xml
-│   ├── icons/                    ← 9 PNG sizes + maskable
-│   └── fonts/                    ← Self-hosted woff2
+│   ├── icons/                        ← 9 PNG sizes + maskable
+│   └── fonts/                        ← Self-hosted woff2
 │
 ├── src/
 │   ├── components/
-│   │   ├── Map/          IndiaMap · StatePanel · ConstituencyPopup
-│   │   ├── EVM/          EVMSimulator · BallotUnit · ControlUnit · VVPATSlip
-│   │   ├── Chat/         ChatDrawer · MessageBubble · TypingIndicator
-│   │   ├── Quiz/         QuizMode · QuestionCard · ScoreScreen
-│   │   ├── Dashboard/    TurnoutChart · PartyChart · WomenChart
-│   │   ├── Education/    ElectionTimeline · ProcessStep · QASearch
-│   │   └── shared/       Navbar · Footer · ErrorBoundary · PageLoader
-│   │                     SkipLink · NumberReveal · OfflineBanner
-│   │                     InstallBanner · UpdateNotification
+│   │   ├── Map/       IndiaMap · StatePanel · ConstituencyPopup
+│   │   ├── EVM/       EVMSimulator · BallotUnit · ControlUnit · VVPATSlip
+│   │   ├── Chat/      ChatDrawer · MessageBubble · TypingIndicator
+│   │   ├── Quiz/      QuizMode · QuestionCard · ScoreScreen
+│   │   │              Leaderboard                ← Firestore leaderboard
+│   │   ├── Dashboard/ TurnoutChart · PartyChart · WomenChart
+│   │   ├── Education/ ElectionTimeline · ProcessStep · QASearch
+│   │   └── shared/    Navbar · Footer · ErrorBoundary · PageLoader
+│   │                  SkipLink · NumberReveal · OfflineBanner
+│   │                  InstallBanner · UpdateNotification
+│   │                  GoogleSignIn               ← Firebase Auth button
 │   │
 │   ├── __tests__/
-│   │   ├── setup.js                ← jsdom environment
-│   │   ├── quiz.test.js            ← 30+ cases
-│   │   ├── electionQA.test.js      ← 20+ cases
-│   │   ├── fallback.test.js        ← integration flows
-│   │   └── electoralConstants.test.js ← edge cases + security
+│   │   ├── setup.js
+│   │   ├── quiz.test.js
+│   │   ├── electionQA.test.js
+│   │   ├── fallback.test.js
+│   │   └── electoralConstants.test.js
 │   │
 │   ├── data/
-│   │   ├── constants.js            ← single source of truth
-│   │   ├── election-qa.js          ← 150+ Q&As with citations
-│   │   ├── quiz-questions.js       ← 80+ questions + explanations
-│   │   ├── election-timeline.js    ← all 4 election types
-│   │   └── static-fallback.js      ← offline fallback
+│   │   ├── constants.js              ← single source of truth
+│   │   ├── election-qa.js            ← 150+ Q&As
+│   │   ├── quiz-questions.js         ← 80+ questions
+│   │   ├── election-timeline.js
+│   │   └── static-fallback.js
 │   │
 │   ├── lib/
-│   │   ├── firebase.js             ← Firebase Analytics
-│   │   ├── sanitise.js             ← XSS protection
-│   │   └── motionVariants.js       ← animation variants
+│   │   ├── firebase.js               ← Analytics + Firestore + Auth
+│   │   ├── sanitise.js               ← XSS protection
+│   │   └── motionVariants.js
 │   │
 │   ├── hooks/
-│   │   └── useElectionData · useAIChat · useQuiz
-│   │       useNetworkStatus · useMediaQuery
-│   │       useMotionConfig · useSEO · useInstallPrompt
+│   │   ├── useAuth.js                ← Firebase Auth state
+│   │   ├── useElectionData.js
+│   │   ├── useAIChat.js
+│   │   ├── useQuiz.js
+│   │   ├── useNetworkStatus.js
+│   │   ├── useMediaQuery.js
+│   │   ├── useMotionConfig.js
+│   │   ├── useSEO.js
+│   │   └── useInstallPrompt.js
 │   │
 │   ├── services/
-│   │   └── gemini · openrouter · tcpd · myneta · dataGov · storage
+│   │   ├── gemini.js                 ← Google Gemini direct SDK
+│   │   ├── openrouter.js
+│   │   ├── tcpd.js
+│   │   ├── myneta.js
+│   │   ├── dataGov.js
+│   │   └── storage.js
 │   │
 │   └── store/index.js
 │
@@ -605,6 +711,8 @@ Gemini unavailable                OpenRouter chain activates silently
 All 4 AI models fail              Local Q&A responds — user never aware
 GeoJSON fails                     Simplified bundled map renders
 Map tiles fail                    Stamen tiles activate automatically
+Firebase unavailable              localStorage used · analytics disabled
+Auth sign-in cancelled            Quiz works anonymously — nothing breaks
 
 Rule: users never hit a dead end. Every failure has a recovery path.
 ```
@@ -621,7 +729,11 @@ Rule: users never hit a dead end. Every failure has a recovery path.
 | [data.gov.in](https://data.gov.in) | Official open data | Bundled JSON |
 | [Datameet India](https://github.com/datameet/maps) | GeoJSON boundaries | `india-states-minimal.js` |
 | [OpenStreetMap](https://openstreetmap.org) | Map tiles · ODbL | Stamen tiles |
-| [OpenRouter](https://openrouter.ai) | AI model routing | Local Q&A database |
+| [OpenRouter](https://openrouter.ai) | AI model routing (L2-L4) | Local Q&A database |
+| [Firebase Firestore](https://firebase.google.com) | Quiz leaderboard | localStorage |
+
+**Content standard:** Every educational entry cites one of:
+ECI.gov.in · Constitution of India (article) · RPA 1951 · PIB
 
 ---
 
@@ -633,18 +745,23 @@ Rule: users never hit a dead end. Every failure has a recovery path.
 
 2. DEMO BUILD
    VITE_ API keys are client-side — acceptable for competition.
-   Production would proxy AI calls through a backend.
+   Production: proxy AI + Firebase calls through a backend.
 
-3. GEOJSON IS PRE-2026
-   Pre-delimitation boundaries. Post-2026 updates in roadmap.
+3. FIREBASE IN TEST MODE
+   Firestore rules set to allow read/write for competition demo.
+   Production would have proper security rules.
 
-4. AI ACCURACY
-   AI constrained to factual answers with source citations.
-   Verify at eci.gov.in for any legal or official purpose.
+4. AUTH IS OPTIONAL
+   Google Sign-In enhances leaderboard — not required for anything.
+   Every feature works without authentication.
 
 5. FIREBASE WITHOUT CONFIG
-   Analytics disabled gracefully — zero errors, zero crashes.
-   Full analytics when Firebase project config is provided.
+   All Firebase services fail silently if keys absent.
+   Zero errors, zero UX degradation.
+
+6. AI ACCURACY
+   Constrained by system prompt and low temperature (0.2).
+   Verify at eci.gov.in for any legal or official purpose.
 ```
 
 ---
@@ -662,11 +779,12 @@ Rule: users never hit a dead end. Every failure has a recovery path.
 ✅  Phase 8   Testing — 80+ cases, Vitest, integration flows
 ✅  Phase 9   Google Services — Gemini SDK, Firebase Analytics
 ✅  Phase 10  Code Quality — PropTypes, JSDoc, constants, sanitise
+✅  Phase 11  Firebase Complete — Firestore + Auth + leaderboard
 
-🔜  Phase 11  i18n — Hindi, Marathi, Tamil, Telugu
-🔜  Phase 12  Real-time election results feed
-🔜  Phase 13  Voter registration via ECI API
-🔜  Phase 14  Native mobile — React Native
+🔜  Phase 12  i18n — Hindi, Marathi, Tamil, Telugu
+🔜  Phase 13  Real-time election results feed
+🔜  Phase 14  Voter registration via ECI API
+🔜  Phase 15  Native mobile — React Native
 ```
 
 ---
@@ -678,9 +796,12 @@ Rule: users never hit a dead end. Every failure has a recovery path.
 | Design | Dated | Generic | ✅ Editorial, premium |
 | EVM simulator | ❌ | ❌ | ✅ Full simulation |
 | AI assistant | ❌ | ❌ | ✅ 5-layer + offline |
-| Test suite | ❌ | ❌ | ✅ 80+ cases, 0 failures |
+| Firebase Auth | ❌ | ❌ | ✅ Google Sign-In |
+| Firebase Firestore | ❌ | ❌ | ✅ Live leaderboard |
 | Firebase Analytics | ❌ | ❌ | ✅ 10 tracked events |
-| Gemini AI (direct) | ❌ | ❌ | ✅ SDK integrated |
+| Test suite | ❌ | ❌ | ✅ 80+ cases, 0 failures |
+| JSDoc coverage | ❌ | Partial | ✅ Every service + hook |
+| PropTypes | ❌ | Partial | ✅ Every component |
 | Offline capability | ❌ | Rare | ✅ Full PWA |
 | Lighthouse score | 30–50 | 50–70 | ✅ 90+ |
 | Google Cloud deploy | ❌ | ❌ | ✅ Cloud Run |
@@ -694,13 +815,15 @@ Rule: users never hit a dead end. Every failure has a recovery path.
 git checkout -b feature/your-feature
 git commit -m 'feat: description'
 git push origin feature/your-feature
+# Open Pull Request against main
 ```
 
 | Area | What's Needed |
 |------|---------------|
-| Content | Expand Q&A database · add citations |
-| i18n | Hindi, Marathi, Tamil, Telugu |
-| Tests | Increase coverage · E2E with Cypress |
+| Content | Expand Q&A · add citations · improve accuracy |
+| i18n | Hindi, Marathi, Tamil, Telugu translations |
+| Tests | Increase coverage · Cypress E2E |
+| Firebase | Firestore security rules for production |
 | Accessibility | Screen reader improvements |
 
 ---
@@ -747,9 +870,10 @@ that this notice appears in all copies or substantial portions.
   Demo          →    https://youtu.be/RKSnSyANSWU
   Vertical      →    Election Process Education
   Platform      →    Google Antigravity + Google Cloud Run
+  Google Stack  →    Gemini · Gemma · Firebase · Cloud Run · GCP
   Tests         →    80+ cases · 5 files · 0 failures
   Competition   →    Google PromptWars 2026
-  Version       →    2.0  ·  April 2026  ·  Status: Shipped 🚀
+  Version       →    3.0  ·  April 2026  ·  Status: Shipped 🚀
 ```
 
 ```
