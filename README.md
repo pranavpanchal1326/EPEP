@@ -16,7 +16,7 @@
 ```
 
 <p>
-  <a href="https://epep-frfy47jpra-el.a.run.app">
+  <a href="https://epep-1013785138678.asia-south1.run.app">
     <img src="https://img.shields.io/badge/🟢_LIVE-Google_Cloud_Run-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white" alt="Live on Google Cloud Run"/>
   </a>
   <a href="https://youtu.be/RKSnSyANSWU">
@@ -48,7 +48,7 @@
 
 <br/>
 
-[🚀 Live App](https://epep-frfy47jpra-el.a.run.app) · [🗺️ India Map](https://epep-frfy47jpra-el.a.run.app/map) · [🗳️ EVM Simulator](https://epep-frfy47jpra-el.a.run.app/evm) · [📖 Education Hub](https://epep-frfy47jpra-el.a.run.app/learn) · [🧠 Quiz](https://epep-frfy47jpra-el.a.run.app/quiz) · [📊 Dashboard](https://epep-frfy47jpra-el.a.run.app/dashboard)
+[🚀 Live App](https://epep-1013785138678.asia-south1.run.app) · [🗺️ India Map](https://epep-1013785138678.asia-south1.run.app/map) · [🗳️ EVM Simulator](https://epep-1013785138678.asia-south1.run.app/evm) · [📖 Education Hub](https://epep-1013785138678.asia-south1.run.app/learn) · [🧠 Quiz](https://epep-1013785138678.asia-south1.run.app/quiz) · [📊 Dashboard](https://epep-1013785138678.asia-south1.run.app/dashboard)
 
 </div>
 
@@ -74,7 +74,7 @@
 |-------|--------|
 | **Competition** | Google PromptWars 2026 — Antigravity Platform |
 | **Chosen Vertical** | Election Process Education |
-| **Live URL** | [epep-frfy47jpra-el.a.run.app](https://epep-frfy47jpra-el.a.run.app) |
+| **Live URL** | [epep-1013785138678.asia-south1.run.app](https://epep-1013785138678.asia-south1.run.app) |
 | **Deployed On** | Google Cloud Run · asia-south1 (Mumbai) |
 | **Repository** | Public · Single Branch · < 1MB |
 | **Team** | Solo Developer — AI-Assisted Build via Google Antigravity |
@@ -280,7 +280,7 @@ Firebase: graceful degradation
 | Google Service | How It's Used | Evidence in Code |
 |----------------|---------------|------------------|
 | **Google Antigravity** | Primary build platform | Entire project built inside Antigravity |
-| **Google Cloud Run** | Production deployment | `https://epep-frfy47jpra-el.a.run.app` |
+| **Google Cloud Run** | Production deployment | `https://epep-1013785138678.asia-south1.run.app` |
 | **Google Artifact Registry** | Docker image storage | `asia-south1-docker.pkg.dev/epep-promptwars-2026` |
 | **Google Cloud Build** | CI/CD auto-deploy on push | `cloudbuild.yaml` |
 | **Google Gemini 1.5 Flash** | Primary AI model — Layer 1 | `src/services/gemini.js` |
@@ -343,7 +343,7 @@ const model = genAI.getGenerativeModel({
                                        │
                 ┌──────────────────────▼───────────────────────────┐
                 │            GOOGLE CLOUD RUN (nginx)               │
-                │   epep-frfy47jpra-el.a.run.app · asia-south1     │
+                │   epep-1013785138678.asia-south1.run.app · asia-south1     │
                 │   node:20 build → nginx:alpine · Port 8080       │
                 └──────────────────────┬───────────────────────────┘
                                        │
@@ -591,7 +591,7 @@ gcloud run deploy epep \
   --allow-unauthenticated --port=8080 --memory=256Mi \
   --min-instances=1
 
-# Live: https://epep-frfy47jpra-el.a.run.app
+# Live: https://epep-1013785138678.asia-south1.run.app
 ```
 
 ---
@@ -880,7 +880,7 @@ that this notice appears in all copies or substantial portions.
 *Every citizen deserves to understand their democracy.*
 
 ```
-  Live          →    https://epep-frfy47jpra-el.a.run.app
+  Live          →    https://epep-1013785138678.asia-south1.run.app
   Demo          →    https://youtu.be/RKSnSyANSWU
   Vertical      →    Election Process Education
   Platform      →    Google Antigravity + Google Cloud Run
