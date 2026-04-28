@@ -633,6 +633,12 @@ epep/
 │   ├── icons/                        ← 9 PNG sizes + maskable
 │   └── fonts/                        ← Self-hosted woff2
 │
+├── docs/                         ← Organized documentation
+│   ├── BILLING_SETUP_REQUIRED.md
+│   ├── CLOUD_RUN_SETUP.md
+│   ├── DEPLOYMENT_READY.md
+│   └── QA_CERTIFICATION.txt
+│
 ├── src/
 │   ├── components/
 │   │   ├── Map/       IndiaMap · StatePanel · ConstituencyPopup
@@ -688,6 +694,14 @@ epep/
 │   └── store/index.js
 │
 ├── scripts/
+│   ├── deployment/               ← Cloud Run automation
+│   │   ├── complete_deployment.py
+│   │   ├── deploy.py
+│   │   ├── deploy_final.py
+│   │   ├── deploy_to_cloudrun.py
+│   │   ├── link_billing.py
+│   │   ├── verify_deployment.py
+│   │   └── deploy-to-cloudrun.bat
 │   └── generate-icons · generate-splash · optimise-images
 │
 ├── Dockerfile
