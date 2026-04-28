@@ -11,13 +11,18 @@
  * @returns {string}
  */
 export const sanitiseInput = (input, maxLen = 500) => {
-  if (typeof input !== 'string') return ''
-  return input
-    .replace(/<[^>]*>/g, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '')
-    .trim()
-    .slice(0, maxLen)
+  try {
+    if (typeof input !== 'string') return ''
+    return input
+      .replace(/<[^>]*>/g, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+      .trim()
+      .slice(0, maxLen)
+  } catch (err) {
+    console.warn('[EPEP Sanitise] sanitiseInput failed:', err.message)
+    return ''
+  }
 }
 
 /**
@@ -28,11 +33,16 @@ export const sanitiseInput = (input, maxLen = 500) => {
  * @returns {string}
  */
 export const sanitiseQuery = (query, max = 200) => {
-  if (typeof query !== 'string') return ''
-  return query
-    .replace(/<[^>]*>/g, '')
-    .trim()
-    .slice(0, max)
+  try {
+    if (typeof query !== 'string') return ''
+    return query
+      .replace(/<[^>]*>/g, '')
+      .trim()
+      .slice(0, max)
+  } catch (err) {
+    console.warn('[EPEP Sanitise] sanitiseQuery failed:', err.message)
+    return ''
+  }
 }
 
 /**
@@ -43,6 +53,11 @@ export const sanitiseQuery = (query, max = 200) => {
  * @returns {boolean}
  */
 export const isValidAPIResponse = (data, required = []) => {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return false
-  return required.every((key) => key in data)
+  try {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return false
+    return required.every((key) => key in data)
+  } catch (err) {
+    console.warn('[EPEP Sanitise] isValidAPIResponse failed:', err.message)
+    return false
+  }
 }

@@ -1,7 +1,19 @@
+/**
+ * @fileoverview Women in Elections Chart — EPEP Dashboard
+ * @module WomenChart
+ *
+ * Visualises the number of women candidates vs winners in Indian
+ * General Elections using a responsive ComposedChart.
+ *
+ * @param {Object} props
+ * @param {Array} props.data - Dataset containing gender-specific stats
+ * @param {boolean} [props.isLoading] - Loading state
+ */
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { BarChart2, TrendingUp, Info } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { FADE_UP } from '../../lib/motionVariants';
 
 const WomenChart = ({ data, isLoading, error, className = '' }) => {
@@ -26,4 +38,14 @@ const WomenChart = ({ data, isLoading, error, className = '' }) => {
     </motion.section>
   );
 };
+
+WomenChart.propTypes = {
+  data:      PropTypes.array.isRequired,
+  isLoading: PropTypes.bool,
+}
+
+WomenChart.defaultProps = {
+  isLoading: false,
+}
+
 export default WomenChart;

@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { storage } from '../services/storage'
+import { STORAGE_KEYS } from '../data/constants'
 
 /**
  * EPEP Global Store — Zustand
@@ -39,14 +41,14 @@ export const useAppStore = create((set, get) => ({
   quizAnswers:     [],
   quizScore:       0,
   quizComplete:    false,
-  quizBestScore:   (() => { try { const stored = localStorage.getItem('epep_quiz_best_score'); return stored ? parseInt(stored, 10) : 0; } catch { return 0; } })(),
+  quizBestScore:   storage.get(STORAGE_KEYS.QUIZ_BEST_SCORE, 0),
   startQuiz: (questions) => set({ quizActive: true, quizQuestions: questions, quizCurrentIndex: 0, quizAnswers: [], quizScore: 0, quizComplete: false }),
   submitAnswer: (answer) => set((state) => {
     const newAnswers = [...state.quizAnswers, answer];
     const newScore = answer.isCorrect ? state.quizScore + 1 : state.quizScore;
     const isLastQ = state.quizCurrentIndex >= state.quizQuestions.length - 1;
     if (isLastQ && newScore > state.quizBestScore) {
-      try { localStorage.setItem('epep_quiz_best_score', String(newScore)); } catch { /* ignore */ }
+      storage.set(STORAGE_KEYS.QUIZ_BEST_SCORE, newScore);
     }
     return { quizAnswers: newAnswers, quizScore: newScore, quizCurrentIndex: isLastQ ? state.quizCurrentIndex : state.quizCurrentIndex + 1, quizComplete: isLastQ, quizBestScore: Math.max(state.quizBestScore, newScore) };
   }),
@@ -54,7 +56,14 @@ export const useAppStore = create((set, get) => ({
 
   // ── UI SLICE ──
   isOffline: false,
-  isFirstVisit: (() => { try { const visited = localStorage.getItem('epep_visited'); if (!visited) { localStorage.setItem('epep_visited', 'true'); return true; } return false; } catch { return false; } })(),
+  isFirstVisit: (() => {
+    const visited = storage.get(STORAGE_KEYS.VISITED);
+    if (!visited) {
+      storage.set(STORAGE_KEYS.VISITED, true);
+      return true;
+    }
+    return false;
+  })(),
   apiStatus: { tcpd: 'unknown', myneta: 'unknown', openrouter: 'unknown' },
   setOffline: (status) => set({ isOffline: status }),
   setApiStatus: (api, status) => set((state) => ({ apiStatus: { ...state.apiStatus, [api]: status } })),

@@ -1,17 +1,41 @@
+/**
+ * @fileoverview Quiz Score Screen — EPEP
+ * @module ScoreScreen
+ *
+ * Final screen shown after quiz completion. Features:
+ *   - Score visualization with NumberReveal
+ *   - Grade-based celebration (Confetti for Experts)
+ *   - Personal Best tracking via useLocalScore
+ *   - Optional Google Sign-In for global leaderboard
+ *   - Persistence to both localStorage and Firestore
+ *
+ * @param {Object}   props
+ * @param {Object}   props.stats      - Quiz performance summary
+ * @param {Array}    props.questions  - List of questions asked
+ * @param {Array}    props.answers    - User's answers
+ * @param {Object}   props.mythBusterScore - Extra credit score
+ * @param {Function} props.onRestart  - Reset callback
+ */
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Check, X, Clock, ChevronDown, ChevronUp, Copy } from 'lucide-react'
+import PropTypes from 'prop-types'
 import { QUIZ_CATEGORIES } from '../../data/quiz-questions'
 import { useLocalScore } from '../../hooks/useLocalScore'
 import PersonalBest from './PersonalBest'
 import NumberReveal from '../shared/NumberReveal'
 import { FADE_IN_SCALE, BUTTON_PRESS } from '../../lib/motionVariants'
-import { trackEvent } from '../../lib/firebase'
+import { saveQuizResult, trackEvent } from '../../lib/firebase'
+import useAuth from '../../hooks/useAuth'
+import GoogleSignIn from '../shared/GoogleSignIn'
+import Leaderboard from './Leaderboard'
 
 const ScoreScreen = ({ stats, questions, answers, mythBusterScore, onRestart }) => {
   const navigate = useNavigate(); const tryAgainRef = useRef(null);
   const { bestScore, sessionCount, isNewBest, isTied, saveScore, scoreDelta } = useLocalScore(stats, mythBusterScore);
+  const { user, isLoading, isSignedIn, signIn, signOut } = useAuth();
+  const [scoreSaved, setScoreSaved] = useState(false);
   useEffect(() => {
     saveScore(stats, mythBusterScore);
     trackEvent('quiz_completed', {
@@ -20,6 +44,15 @@ const ScoreScreen = ({ stats, questions, answers, mythBusterScore, onRestart }) 
       percentage: stats.percentage,
       grade: stats.grade?.label,
     });
+
+    saveQuizResult({
+      score: stats.correct,
+      percentage: Math.round((stats.correct / 20) * 100),
+      grade: stats.grade?.label ?? 'Unknown',
+      userId: user?.uid ?? 'anonymous',
+      displayName: user?.displayName ?? 'Anonymous Voter',
+      isSignedIn,
+    }).then(() => setScoreSaved(true));
   }, []);
   useEffect(() => {
     if (stats.grade.label === "Election Expert") {
@@ -76,7 +109,37 @@ const ScoreScreen = ({ stats, questions, answers, mythBusterScore, onRestart }) 
         <motion.button ref={tryAgainRef} autoFocus variants={BUTTON_PRESS} whileHover={{ translateY: -1 }} onClick={onRestart} className="flex-1 bg-accent text-white py-5 px-8 rounded-xl font-bold text-lg shadow-lg">Play Again</motion.button>
         <motion.button variants={BUTTON_PRESS} whileHover={{ translateY: -1 }} onClick={() => navigate('/education')} className="flex-1 bg-transparent border-2 border-accent text-accent py-5 px-8 rounded-xl font-bold text-lg hover:bg-accent-light transition-colors">Explore Hub</motion.button>
       </div>
+
+      <div className="mt-6 flex flex-col items-center gap-4">
+        <GoogleSignIn
+          user={user}
+          isLoading={isLoading}
+          onSignIn={signIn}
+          onSignOut={signOut}
+        />
+        <Leaderboard refreshTrigger={scoreSaved} />
+      </div>
     </div>
   )
 }
+ScoreScreen.propTypes = {
+  stats: PropTypes.shape({
+    correct:    PropTypes.number.isRequired,
+    total:      PropTypes.number.isRequired,
+    percentage: PropTypes.number.isRequired,
+    grade:      PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      emoji: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  questions: PropTypes.array.isRequired,
+  answers:   PropTypes.array.isRequired,
+  mythBusterScore: PropTypes.shape({
+    correct: PropTypes.number.isRequired,
+    total:   PropTypes.number.isRequired,
+  }).isRequired,
+  onRestart: PropTypes.func.isRequired,
+}
+
 export default ScoreScreen;

@@ -1,30 +1,11 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-
-const BEST_KEY = 'epep_quiz_best_score'
-const COUNT_KEY = 'epep_quiz_session_count'
-
-const safeRead = (key) => {
-  try {
-    const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : null
-  } catch {
-    return null
-  }
-}
-
-const safeWrite = (key, value) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(value))
-    return true
-  } catch {
-    return false
-  }
-}
+import { storage } from '../services/storage'
+import { STORAGE_KEYS } from '../data/constants'
 
 export const useLocalScore = (currentStats, currentMythBusterScore) => {
-  const [bestScore, setBestScore] = useState(() => safeRead(BEST_KEY))
+  const [bestScore, setBestScore] = useState(() => storage.get(STORAGE_KEYS.QUIZ_BEST_SCORE))
   const [sessionCount, setSessionCount] = useState(() => {
-    const raw = safeRead(COUNT_KEY)
+    const raw = storage.get(STORAGE_KEYS.QUIZ_SESSION_COUNT)
     return typeof raw === 'number' ? raw : 0
   })
 
@@ -47,7 +28,7 @@ export const useLocalScore = (currentStats, currentMythBusterScore) => {
   const saveScore = useCallback((stats, mythBusterScore) => {
     if (!stats) return
     const newCount = sessionCount + 1
-    safeWrite(COUNT_KEY, newCount)
+    storage.set(STORAGE_KEYS.QUIZ_SESSION_COUNT, newCount)
     setSessionCount(newCount)
 
     const shouldUpdate = !bestScore || stats.percentage > bestScore.percentage
@@ -61,17 +42,17 @@ export const useLocalScore = (currentStats, currentMythBusterScore) => {
         achievedAt: new Date().toISOString(),
         sessionCount: newCount
       }
-      safeWrite(BEST_KEY, newBest)
+      storage.set(STORAGE_KEYS.QUIZ_BEST_SCORE, newBest)
       setBestScore(newBest)
     }
   }, [bestScore, sessionCount])
 
   const clearScore = useCallback(() => {
     try {
-      localStorage.removeItem(BEST_KEY)
-      localStorage.removeItem(COUNT_KEY)
-      setBestScore(null)
-      setSessionCount(0)
+    storage.remove(STORAGE_KEYS.QUIZ_BEST_SCORE)
+    storage.remove(STORAGE_KEYS.QUIZ_SESSION_COUNT)
+    setBestScore(null)
+    setSessionCount(0)
     } catch {
       // localStorage may be unavailable (incognito/quota)
     }
@@ -80,7 +61,7 @@ export const useLocalScore = (currentStats, currentMythBusterScore) => {
   useEffect(() => {
     if (import.meta.env.DEV) {
       window.__epep_clearScore = clearScore
-      window.__epep_bestScore = () => safeRead(BEST_KEY)
+      window.__epep_bestScore = () => storage.get(STORAGE_KEYS.QUIZ_BEST_SCORE)
     }
     return () => {
       if (import.meta.env.DEV) {

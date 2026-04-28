@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
 import { useMotionConfig } from '../../hooks/useMotionConfig';
 
-const TypingIndicator = () => {
+const TypingIndicator = ({ isVisible }) => {
   const { disableTranslation } = useMotionConfig();
+  if (!isVisible) return null;
   return (
     <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="flex justify-start mb-4">
       <div className="bg-surface border border-border-soft rounded-[16px] rounded-bl-[4px] px-4 py-3 flex gap-1.5 items-center shadow-sm">
@@ -19,4 +21,9 @@ const TypingIndicator = () => {
     </motion.div>
   );
 };
+
+TypingIndicator.propTypes = {
+  isVisible: PropTypes.bool.isRequired,
+}
+
 export default TypingIndicator;

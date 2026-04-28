@@ -1,4 +1,18 @@
-﻿import { useState, useEffect } from 'react';
+/**
+ * @fileoverview EVM Control Unit — EPEP Simulator Component
+ * @module ControlUnit
+ *
+ * Simulates the Control Unit (CU) used by the Returning Officer
+ * to enable the Ballot Unit and record votes. Features a mock
+ * LCD screen and RO control panel.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isEnabled     - CU activation state
+ * @param {boolean} props.voteConfirmed - VVPAT/BU confirmation state
+ * @param {string}  [props.candidate]   - Currently selected candidate
+ * @param {Function} props.onEnable      - Trigger CU activation
+ */
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Receipt, AlertTriangle, X } from 'lucide-react';
 
@@ -223,20 +237,14 @@ const ControlUnit = ({
 };
 
 ControlUnit.propTypes = {
-  phase: PropTypes.string.isRequired,
-  selectedCandidate: PropTypes.number,
-  candidates: PropTypes.array.isRequired,
-  voteTimestamp: PropTypes.instanceOf(Date),
-  sessionId: PropTypes.string,
-  mockResults: PropTypes.array,
-  errorMessage: PropTypes.string,
-  isTransitioning: PropTypes.bool,
-  onEnable: PropTypes.func.isRequired,
-  onViewResults: PropTypes.func.isRequired,
-  onReset: PropTypes.func.isRequired,
-  onVVPATReady: PropTypes.func,
-  constituencyName: PropTypes.string.isRequired,
-  dismissError: PropTypes.func.isRequired
-};
+  isEnabled:    PropTypes.bool.isRequired,
+  voteConfirmed:PropTypes.bool.isRequired,
+  candidate:    PropTypes.string,
+  onEnable:     PropTypes.func.isRequired,
+}
+
+ControlUnit.defaultProps = {
+  candidate: null,
+}
 
 export default ControlUnit;

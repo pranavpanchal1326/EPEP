@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, X } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
-const UpdateNotification = () => {
+const UpdateNotification = ({ onUpdate }) => {
   const sw = useRegisterSW();
   const [offlineReady, setOfflineReady] = sw?.offlineReady || [false, () => {}];
   const [needUpdate, setNeedUpdate] = sw?.needUpdate || [false, () => {}];
@@ -30,7 +31,7 @@ const UpdateNotification = () => {
             <h4 className="font-['DM_Sans'] font-semibold text-sm text-[#1A1814]">Update Available</h4>
             <p className="font-['DM_Sans'] text-xs text-[#6B6560] mt-1">A new version of EPEP is ready for you.</p>
             <div className="mt-4 flex gap-2">
-              <button onClick={() => updateServiceWorker(true)} className="bg-[#2D5A3D] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#244831] transition-colors">Update Now</button>
+              <button onClick={() => { if (onUpdate) onUpdate(); updateServiceWorker(true); }} className="bg-[#2D5A3D] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#244831] transition-colors">Update Now</button>
               <button onClick={close} className="bg-transparent text-[#6B6560] px-4 py-2 rounded-lg text-xs font-bold hover:bg-[#F8F7F4] transition-colors">Later</button>
             </div>
           </div>
@@ -40,4 +41,9 @@ const UpdateNotification = () => {
     </AnimatePresence>
   );
 };
+
+UpdateNotification.propTypes = {
+  onUpdate: PropTypes.func.isRequired,
+}
+
 export default UpdateNotification;

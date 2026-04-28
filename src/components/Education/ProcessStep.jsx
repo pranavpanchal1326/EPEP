@@ -1,5 +1,17 @@
+/**
+ * @fileoverview Election Process Step — EPEP Education Component
+ * @module ProcessStep
+ *
+ * An interactive, expandable card representing a single step in the
+ * Indian election process. Displays description, responsible parties,
+ * timeline, legal basis, and voter actions.
+ *
+ * @param {Object} props
+ * @param {Object} props.step - Complete step data object
+ */
 import React, { useState } from 'react';
 import { ChevronRight, ExternalLink, Clock, Scale, Users, AlertCircle, FileText } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 const ProcessStep = ({ step }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -115,4 +127,23 @@ const ProcessStep = ({ step }) => {
     </div>
   );
 };
+
+ProcessStep.propTypes = {
+  step: PropTypes.shape({
+    stepId:      PropTypes.string.isRequired,
+    title:       PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    responsible: PropTypes.arrayOf(PropTypes.string).isRequired,
+    legalBasis:  PropTypes.string,
+    sourceUrl:   PropTypes.string,
+  }).isRequired,
+  isExpanded: PropTypes.bool,
+  onToggle:   PropTypes.func,
+};
+
+ProcessStep.defaultProps = {
+  isExpanded: false,
+  onToggle: () => {},
+};
+
 export default ProcessStep;

@@ -50,12 +50,14 @@ export const AI_MODELS = Object.freeze([
 ])
 
 export const STORAGE_KEYS = Object.freeze({
-  QUIZ_BEST_SCORE: 'epep_quiz_best_score',
-  QUIZ_HISTORY: 'epep_quiz_history',
-  LAST_CONSTITUENCY: 'epep_last_constituency',
-  CHAT_HISTORY: 'epep_chat_history',
-  UPDATE_DISMISSED: 'epep_update_dismissed',
-  INSTALL_DISMISSED: 'epep_install_dismissed',
+  QUIZ_BEST_SCORE: 'quiz_best_score',
+  QUIZ_HISTORY: 'quiz_history',
+  LAST_CONSTITUENCY: 'last_constituency',
+  CHAT_HISTORY: 'chat_history',
+  UPDATE_DISMISSED: 'update_dismissed',
+  INSTALL_DISMISSED: 'install_dismissed',
+  VISITED: 'visited',
+  QUIZ_SESSION_COUNT: 'quiz_session_count',
 })
 
 export const QA_CATEGORIES = Object.freeze([

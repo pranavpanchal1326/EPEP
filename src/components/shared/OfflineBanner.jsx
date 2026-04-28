@@ -1,11 +1,27 @@
+/**
+ * @fileoverview Network Connectivity Banner — EPEP
+ * @module OfflineBanner
+ *
+ * Sticky top-bar notification that appears when the user is offline
+ * or has just reconnected. Uses the EPEP design system colors:
+ *   - Offline: #1A1814 (Ink Black)
+ *   - Back Online: #2D5A3D (Forest Green)
+ *
+ * @param {Object} props
+ * @param {boolean} props.isOnline   - Current connectivity state
+ * @param {boolean} [props.wasOffline] - True if just reconnected
+ */
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WifiOff, Wifi } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { useQueryClient } from '@tanstack/react-query';
 
-const OfflineBanner = () => {
-  const { isOnline, wasOffline } = useNetworkStatus();
+const OfflineBanner = ({ isOnline: isOnlineProp, wasOffline: wasOfflineProp }) => {
+  const status = useNetworkStatus();
+  const isOnline = typeof isOnlineProp === 'boolean' ? isOnlineProp : status.isOnline;
+  const wasOffline = typeof wasOfflineProp === 'boolean' ? wasOfflineProp : status.wasOffline;
   const queryClient = useQueryClient();
 
   React.useEffect(() => {
@@ -39,4 +55,14 @@ const OfflineBanner = () => {
     </AnimatePresence>
   );
 };
+
+OfflineBanner.propTypes = {
+  isOnline:   PropTypes.bool.isRequired,
+  wasOffline: PropTypes.bool,
+}
+
+OfflineBanner.defaultProps = {
+  wasOffline: false,
+}
+
 export default OfflineBanner;

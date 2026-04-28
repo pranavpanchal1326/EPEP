@@ -1,7 +1,22 @@
+/**
+ * @fileoverview Voter Turnout Chart — EPEP Dashboard
+ * @module TurnoutChart
+ *
+ * Visualises historical voter turnout in Indian General Elections
+ * using a responsive AreaChart. Supports multiple data sources
+ * with automatic attribution badges.
+ *
+ * @param {Object} props
+ * @param {Array|Object} props.data - Election turnout dataset
+ * @param {boolean} [props.isLoading] - Loading state
+ * @param {number} [props.selectedYear] - Currently highlighted year
+ * @param {Function} [props.onYearChange] - Year selection callback
+ */
 import React, { useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
 import { TrendingUp, AlertCircle, Info } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { FADE_UP } from '../../lib/motionVariants';
 import { useAppStore, selectors } from '../../store';
 import { trackEvent } from '../../lib/firebase';
@@ -9,6 +24,10 @@ import { trackEvent } from '../../lib/firebase';
 const DataSourceBadge = ({ source }) => {
   const colors = { live: 'bg-[#00C853] text-white', datagov: 'bg-[#2196F3] text-white', static: 'bg-[#6B6560] text-white' };
   return <span className={"text-[10px] font-mono px-2 py-0.5 rounded-full ml-3 " + (colors[source] || colors.static)}>Data: {source}</span>;
+};
+
+DataSourceBadge.propTypes = {
+  source: PropTypes.string.isRequired,
 };
 
 const TurnoutChart = ({ data, isLoading, error, className = '', isMobile }) => {
@@ -66,5 +85,21 @@ const TurnoutChart = ({ data, isLoading, error, className = '', isMobile }) => {
     </motion.section>
   );
 };
+
+TurnoutChart.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    year:    PropTypes.number.isRequired,
+    turnout: PropTypes.number.isRequired,
+  })).isRequired,
+  isLoading:     PropTypes.bool,
+  selectedYear:  PropTypes.number,
+  onYearChange:  PropTypes.func,
+}
+
+TurnoutChart.defaultProps = {
+  isLoading: false,
+  selectedYear: null,
+  onYearChange: null,
+}
 
 export default TurnoutChart;

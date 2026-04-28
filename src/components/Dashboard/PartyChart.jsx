@@ -1,8 +1,21 @@
+/**
+ * @fileoverview Party Performance Chart — EPEP Dashboard
+ * @module PartyChart
+ *
+ * Displays Lok Sabha seats won per party over time using a
+ * responsive BarChart. Supports grouped and stacked views.
+ *
+ * @param {Object} props
+ * @param {Array} props.data - Dataset containing party-wise seat counts
+ * @param {boolean} [props.isLoading] - Loading state
+ */
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { motion } from 'framer-motion';
 import { AlertCircle, BarChart2, Layers } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { FADE_UP, STAGGER_CONTAINER, STAGGER_ITEM } from '../../lib/motionVariants';
+import { LOK_SABHA_SEATS } from '../../data/constants';
 
 const TRACKED_PARTIES = [
   { key: 'INC',  label: 'Indian National Congress', color: '#1E7BC4' },
@@ -30,7 +43,7 @@ const PartyChart = ({ data, isLoading, error, className = '' }) => {
           <BarChart data={data || []} margin={{ left: -20 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8E4DC" />
             <XAxis dataKey="year" tick={{ fontSize: 12, fontFamily: 'JetBrains Mono' }} />
-            <YAxis tick={{ fontSize: 12, fontFamily: 'JetBrains Mono' }} domain={[0, 543]} />
+            <YAxis tick={{ fontSize: 12, fontFamily: 'JetBrains Mono' }} domain={[0, LOK_SABHA_SEATS]} />
             <Tooltip />
             {TRACKED_PARTIES.map(p => (<Bar key={p.key} dataKey={p.key} fill={p.color} stackId={chartMode === 'stacked' ? 'a' : undefined} animationDuration={800} />))}
           </BarChart>
@@ -39,4 +52,14 @@ const PartyChart = ({ data, isLoading, error, className = '' }) => {
     </motion.section>
   );
 };
+
+PartyChart.propTypes = {
+  data:      PropTypes.array.isRequired,
+  isLoading: PropTypes.bool,
+}
+
+PartyChart.defaultProps = {
+  isLoading: false,
+}
+
 export default PartyChart;

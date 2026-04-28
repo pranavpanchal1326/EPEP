@@ -1,5 +1,21 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+/**
+ * @fileoverview Constituency Details Popup — EPEP India Map
+ * @module ConstituencyPopup
+ *
+ * Floating tooltip component that displays high-level data for a
+ * selected constituency on the India Map. Features 2024 results,
+ * candidate assets, criminal cases, and election phase.
+ *
+ * @param {Object} props
+ * @param {string} props.name     - Constituency name
+ * @param {string} [props.mp]     - Current Member of Parliament
+ * @param {string} [props.party]  - Represented party
+ * @param {number} [props.turnout]- Voter turnout percentage
+ * @param {Function} props.onClick- Interaction callback
+ */
+import { useState, useEffect, useCallback } from 'react';
 import { X, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { PHASE_COLORS } from '@/data/static-fallback';
 
 const STATIC_CONSTITUENCY_DATA = {
@@ -133,5 +149,17 @@ const ConstituencyPopup = ({ constituency, mapRef, onClose, onViewDetails }) => 
     </div>
   );
 };
+
+ConstituencyPopup.propTypes = {
+  name:     PropTypes.string.isRequired,
+  mp:       PropTypes.string,
+  party:    PropTypes.string,
+  turnout:  PropTypes.number,
+  onClick:  PropTypes.func.isRequired,
+}
+
+ConstituencyPopup.defaultProps = {
+  mp: null, party: null, turnout: null,
+}
 
 export default ConstituencyPopup;
